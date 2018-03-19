@@ -1,9 +1,14 @@
 package roster.bean;
 
-import java.io.Serializable;
 
-public class Player implements Serializable {
+/**
+ * Basic information used for a player.  SerialVersion is needed for writing data to a txt file
+ * @author Kanak
+ *
+ */
+public class Player extends BaseBean {
 
+	
 	private static final long serialVersionUID = 1L;
 	private String firstName;
 	private String lastName;

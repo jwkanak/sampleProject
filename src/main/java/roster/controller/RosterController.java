@@ -7,13 +7,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import roster.bean.BaseBean;
 import roster.bean.Player;
 import roster.bean.Team;
 import roster.service.RosterService;
 
 /**
  * main controller for service
+ * 
  * @author Kanak
+ * TODO:  Add in validation and loggers through out.  
  *
  */
 @RestController
@@ -21,9 +24,6 @@ public class RosterController {
 
 	@Autowired
 	RosterService rosterService;
-
-	private static final String SUCCESS_RESULT = "success";
-	private static final String FAILURE_RESULT = "failure";
 
 	/**
 	 * returns complete roster for team
@@ -51,44 +51,42 @@ public class RosterController {
 
 	/**
 	 * Updates player if valid player in system
+	 * 
 	 * @param teamId
 	 * @param player
 	 * @return {String result}
 	 */
 	@RequestMapping(value = "/team/{teamId}/player", method = RequestMethod.PUT)
-	public String updatePlayer(@PathVariable String teamId, @RequestBody Player player) {
+	public Player updatePlayer(@PathVariable String teamId, @RequestBody Player player) {
 
-		int result = rosterService.updatePlayer(teamId, player);
-
-		return result == 1 ? SUCCESS_RESULT : FAILURE_RESULT;
+		return rosterService.updatePlayer(teamId, player);
 	}
 
 	/**
 	 * Adds new player to roster if does not already exist
+	 * 
 	 * @param teamId
 	 * @param newPlayer
 	 * @return{String result}
 	 */
 	@RequestMapping(value = "/team/{teamId}/player", method = RequestMethod.POST)
-	public String insertPlayer(@PathVariable String teamId, @RequestBody Player newPlayer) {
+	public Player insertPlayer(@PathVariable String teamId, @RequestBody Player newPlayer) {
 
-		int result = rosterService.insertPlayer(teamId, newPlayer);
-
-		return result == 1 ? SUCCESS_RESULT : FAILURE_RESULT;
+		return rosterService.insertPlayer(teamId, newPlayer);
 	}
 
 	/**
 	 * Deletes player from roster if he exists
+	 * 
 	 * @param teamId
 	 * @param playerId
 	 * @return{String result}
 	 */
 	@RequestMapping(value = "/team/{teamId}/player/{playerId}", method = RequestMethod.DELETE)
-	public String removePlayer(@PathVariable String teamId, @PathVariable String playerId) {
+	public BaseBean removePlayer(@PathVariable String teamId, @PathVariable String playerId) {
 
-		int result = rosterService.deletePlayer(teamId, playerId);
+		return rosterService.deletePlayer(teamId, playerId);
 
-		return result == 1 ? SUCCESS_RESULT : FAILURE_RESULT;
 	}
 
 }

@@ -1,8 +1,9 @@
 package roster.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
+import roster.bean.BaseBean;
 import roster.bean.Player;
 import roster.bean.Team;
 import roster.dao.RosterDao;
@@ -15,7 +16,7 @@ import roster.dao.RosterDao;
  * @author Kanak
  *
  */
-@Repository(value = "RosterService")
+@Service(value = "RosterService")
 public class RosterService {
 
 	@Autowired
@@ -25,7 +26,7 @@ public class RosterService {
 	 * calls rosterDAO to get team Roster
 	 * 
 	 * @param teamId
-	 * @return{int}
+	 * @return{Team}
 	 */
 	public Team getRoster(String teamId) {
 		return rosterDao.getTeamRoster(teamId);
@@ -36,7 +37,7 @@ public class RosterService {
 	 * 
 	 * @param teamId
 	 * @param playerId
-	 * @return{int}
+	 * @return{Player}
 	 */
 	public Player getPlayer(String teamId, String playerId) {
 		return rosterDao.getPlayer(playerId, playerId);
@@ -47,12 +48,11 @@ public class RosterService {
 	 * 
 	 * @param teamId
 	 * @param updatePlayer
-	 * @return
+	 * @return {Player}
 	 */
-	public int updatePlayer(String teamId, Player updatePlayer) {
-		int result = rosterDao.updatePlayerInfo(teamId, updatePlayer);
+	public Player updatePlayer(String teamId, Player updatePlayer) {
+		return rosterDao.updatePlayerInfo(teamId, updatePlayer);
 
-		return result;
 	}
 
 	/**
@@ -60,12 +60,11 @@ public class RosterService {
 	 * 
 	 * @param teamId
 	 * @param updatePlayer
-	 * @return {int}
+	 * @return {Player}
 	 */
-	public int insertPlayer(String teamId, Player updatePlayer) {
-		int result = rosterDao.insertPlayer(teamId, updatePlayer);
+	public Player insertPlayer(String teamId, Player updatePlayer) {
+		return rosterDao.insertPlayer(teamId, updatePlayer);
 
-		return result;
 	}
 
 	/**
@@ -73,12 +72,10 @@ public class RosterService {
 	 * 
 	 * @param teamId
 	 * @param playerId
-	 * @return{int}
+	 * @return{BaseBean}
 	 */
-	public int deletePlayer(String teamId, String playerId) {
-		int result = rosterDao.deletePlayer(teamId, playerId);
-
-		return result;
+	public BaseBean deletePlayer(String teamId, String playerId) {
+		return rosterDao.deletePlayer(teamId, playerId);
 	}
 
 }

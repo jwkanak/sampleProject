@@ -12,18 +12,25 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
+import roster.bean.BaseBean;
 import roster.bean.Player;
 import roster.bean.Team;
 
 /**
  * Class designed to handle interaction with the data layer
  * @author Kanak
- *
+ *TODO:  Add logging and errors methods
  */
 @Repository(value = "RosterDao")
 public class RosterDao {
 
+	/**
+	 * Map of teams
+	 */
 	HashMap<String, Team> teams;
+	
+	private static final String SUCCESS_RESULT = "success";
+	private static final String FAILURE_RESULT = "failure";
 
 	/**
 	 * returns team
@@ -31,7 +38,9 @@ public class RosterDao {
 	 * @return{Team}
 	 */
 	public Team getTeamRoster(String teamId) {
-		return getTeamMap().get(teamId);
+		Team team = getTeamMap().get(teamId);
+		team.setStatusMessage(SUCCESS_RESULT);
+		return team;
 	}
 
 	/**
@@ -41,69 +50,74 @@ public class RosterDao {
 	 * @return{Player}
 	 */
 	public Player getPlayer(String teamId, String playerId) {
-		return this.getTeamMap().get(teamId).getPlayer(playerId);
+		Player player = this.getTeamMap().get(teamId).getPlayer(playerId);
+		player.setStatusMessage(SUCCESS_RESULT);
+		return player;
 	}
 
 	/**
 	 * update current player on roster
 	 * @param teamId
 	 * @param updatePlayer
-	 * @return{int}
+	 * @return{Player}
 	 */
-	public int updatePlayerInfo(String teamId, Player updatePlayer) {
-		int result = 0;
+	public Player updatePlayerInfo(String teamId, Player updatePlayer) {
+		String result = FAILURE_RESULT;
 		Team team = this.getTeamMap().get(teamId);
 		Player originalPlayer = team.getPlayer(updatePlayer.getPlayerId());
 
 		if (originalPlayer != null) {
 			team.insertPlayer(updatePlayer);
 			updateFile(team);
-			result = 1;
+			result = SUCCESS_RESULT;
 		}
-		return result;
+		
+		updatePlayer.setStatusMessage(result);
+		return updatePlayer;
 	}
 	
 	/**
 	 * Only insert player if player does not already exist within roster.
 	 * @param teamId
 	 * @param newPlayer
-	 * @return{int}
+	 * @return{Player}
 	 */
-	public int insertPlayer(String teamId, Player newPlayer) {
-		int result = 0;
+	public Player insertPlayer(String teamId, Player newPlayer) {
+		String result = FAILURE_RESULT;
 		Team team = this.getTeamMap().get(teamId);
 		boolean playerExists = isPlayerOnRoster(team, newPlayer.getPlayerId());
 		
 		if(!playerExists) {
 			team.insertPlayer(newPlayer);
 			updateFile(team);
-			result = 1;
+			result = SUCCESS_RESULT;
 		}
-			
-		return result;
+		newPlayer.setStatusMessage(result);
+		return newPlayer;
 	}
 	
 	/**
 	 * if player exists, delete
 	 * @param teamId
 	 * @param playerId
-	 * @return{int}
+	 * @return{BaseBean}
 	 */
-	public int deletePlayer(String teamId, String playerId) {
-		int result = 0;
+	public BaseBean deletePlayer(String teamId, String playerId) {
+		String result = FAILURE_RESULT;
+		BaseBean resultBean = new BaseBean();
 		Team team = this.getTeamMap().get(teamId);
 		boolean playerExists = isPlayerOnRoster(team, playerId);
 		
 		if(playerExists) {
 			//only attempt to remove if player exists
 			if(team.deletePlayer(playerId)) {
-				result = 1;
+				result = SUCCESS_RESULT;
 				updateFile(team);
 			}
 			
 		} 
-		
-		return result;
+		resultBean.setStatusMessage(result);
+		return resultBean;
 	}
 	
 	/**
